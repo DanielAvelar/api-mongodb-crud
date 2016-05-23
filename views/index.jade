@@ -1,0 +1,25 @@
+extends ./layout
+
+block content
+    p 
+     a(href='/logout') Logout&nbsp;
+    p
+     a(href='/api/newBook') Insert new book
+    p 
+     a(href='/api/createUser') Create new user
+    h1.
+         #{title}
+    table
+        - each book, i in books
+            tr
+                td #{book.name}
+                td
+                  form(method="POST", action="/api/deleteBook/#{book.isbn}")
+                   input(type="submit", value="Delete", style="cursor:pointer")
+                td
+                  form(method="GET", action="/api/getOneBook/#{book.isbn}?edit=true")
+                   input(type="hidden", name="edit", value="true")
+                   input(type="submit", value="Edit", style="cursor:pointer")
+                td
+                  form(method="GET", action="/api/getOneBook/#{book.isbn}")
+                   input(type="submit", value="Details", style="cursor:pointer")

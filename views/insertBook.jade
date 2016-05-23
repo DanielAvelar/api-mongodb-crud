@@ -1,0 +1,17 @@
+extends ./layout
+
+block content
+    a(href='/api/getBooks') Return
+    h1.
+        #{title}
+    form#formAddBook(name="insertBook",method="post",action="/api/insertBooks")
+        p ISBN:&nbsp;&nbsp;
+           input#inputISBN(type="number", name="isbn", style="width:200px;")
+        p Name:&nbsp;&nbsp;
+           input#inputName(type="text", name="name", style="width:500px;")
+        p Author:&nbsp;
+           input#inputAuthor(type="text", name="author", style="width:500px;")
+        p Pages:&nbsp;&nbsp;
+           input#inputPages(type="number", name="pages", style="width:100px;")
+        p
+           button#btnSubmit(type="submit") Insert
