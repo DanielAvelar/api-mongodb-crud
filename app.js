@@ -50,6 +50,9 @@ app.get('/login', function(req, res) {
 
 app.get('/logout', function(req, res) {
     req.session.destroy();
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
     res.render('login', {
         title: 'Login'
     });
@@ -121,6 +124,16 @@ apiRoutes.use(function(req, res, next) {
 // ---------------------------------------------------------
 // Information API.
 apiRoutes.get('/', function(req, res) {
+    res.render('login', {
+        title: 'Authenticate'
+    });
+});
+
+apiRoutes.get('/logout', function(req, res) {
+    req.session.destroy();
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
     res.render('login', {
         title: 'Authenticate'
     });
