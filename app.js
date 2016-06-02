@@ -58,6 +58,25 @@ app.get('/logout', function(req, res) {
     });
 });
 
+// Select All book for database.
+app.get('/getBooksNotAuth', function(req, res) {
+    connection(req, res, function(err, db) {
+        if (err) {
+            formattingResponse(res, 503, 'error', 'Connection', err);
+        } else {
+            db.collection(myCollection).find({}, {}, {}).toArray(
+                function(err, docs) {
+                    var listBooks = [];
+                    for (index in docs) {
+                        listBooks.push(docs[index]);
+                    }
+                    res.json(listBooks);
+                }
+            );
+        }
+    });
+});
+
 // ---------------------------------------------------------
 // get an instance of the router for api routes
 // ---------------------------------------------------------
