@@ -4,22 +4,23 @@ block content
     p 
      a(href='/api/logout') Logout&nbsp;
     p
-     a(href='/api/newBook') Insert new book
+     a(href='/api/newProduct') Insert new product
     p 
      a(href='/api/createUser') Create new user
     h1.
          #{title}
     table
-        - each book, i in books
+        - each product, i in products
             tr
-                td #{book.name}
+                td(style="width: 50px;") #{product.idProduct}
+                td(style="width: 400px;") #{product.name}
                 td
-                  form(method="POST", action="/api/deleteBook/#{book.isbn}")
-                   input(type="submit", value="Delete", style="cursor:pointer")
+                  form(method="POST", action="/api/deleteProduct/#{product.idProduct}")
+                   input(type="image", name="submit", alt="Submit", value="Delete", style="cursor:pointer", src='/images/delete.png', title="Delete")
                 td
-                  form(method="GET", action="/api/getOneBook/#{book.isbn}?edit=true")
+                  form(method="GET", action="/api/getOneProduct/#{product.idProduct}?edit=true")
                    input(type="hidden", name="edit", value="true")
-                   input(type="submit", value="Edit", style="cursor:pointer")
+                   input(type="image", name="submit", alt="Submit", value="Edit", style="cursor:pointer", src='/images/edit.png', title="Edit")
                 td
-                  form(method="GET", action="/api/getOneBook/#{book.isbn}")
-                   input(type="submit", value="Details", style="cursor:pointer")
+                  form(method="GET", action="/api/getOneProduct/#{product.idProduct}")
+                   input(type="image", name="submit", alt="Submit", value="Details", style="cursor:pointer", src='/images/info.png', title="Details")

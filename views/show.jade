@@ -1,9 +1,10 @@
 extends ./layout
 
 block content
-    a(href='/api/getBooks') Return
+    a(href='/api/getProducts') Return
     h1.
-        ISBN #{book.isbn}
-    p Name: #{book.name}
-    p Author: #{book.author}
-    p Pages: #{book.pages}
+        Id Product #{product.idProduct}
+    p Name: #{product.name}
+    p Description: #{product.description}
+    p Amount: #{product.amount}
+    p Category: #{product.category}

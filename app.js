@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var clc = require('cli-color');
 var MongoClient = require('mongodb').MongoClient;
-var myCollection = "crud";
+var myCollection = "products";
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
@@ -15,32 +15,23 @@ var port = process.env.PORT || 54000; // used to create, sign, and verify tokens
 var msg;
 
 mongoose.connect(config.databaseUsers); // connect to database
+
 app.set('superSecret', config.secret); // secret variable
 app.set('view engine', 'jade');
-
-// use body parser so we can get info from POST and/or URL parameters
-app.use(bodyParser.urlencoded({
+app.use(bodyParser.urlencoded({ // use body parser so we can get info from POST and/or URL parameters
     extended: false
 }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
-
-// use morgan to log requests to the console
-app.use(morgan('dev'));
-
+app.use(morgan('dev')); // use morgan to log requests to the console
 app.use(session({
     resave: false,
     saveUninitialized: false,
     secret: 'API_MONGO'
 }));
 
-// basic route (http://localhost:8080)
-app.get('/', function(req, res) {
-    res.render('info', {
-        title: 'Hello',
-        message: 'The API is at http://localhost:' + port + '/api'
-    });
-});
+// Route Index.
+app.use('/', require('./routes/index'));
 
 app.get('/login', function(req, res) {
     res.render('login', {
@@ -48,44 +39,29 @@ app.get('/login', function(req, res) {
     });
 });
 
-app.get('/logout', function(req, res) {
-    req.session.destroy();
-    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    res.header('Expires', '-1');
-    res.header('Pragma', 'no-cache');
-    res.render('login', {
-        title: 'Login'
-    });
-});
-
-// Select All book for database.
-app.get('/getBooksNotAuth', function(req, res) {
+// Select All Product for database.
+app.get('/getProductsNoAuth', function(req, res) {
     connection(req, res, function(err, db) {
         if (err) {
             formattingResponse(res, 503, 'error', 'Connection', err);
         } else {
             db.collection(myCollection).find({}, {}, {}).toArray(
                 function(err, docs) {
-                    var listBooks = [];
+                    var listProducts = [];
                     for (index in docs) {
-                        listBooks.push(docs[index]);
+                        listProducts.push(docs[index]);
                     }
-                    res.json(listBooks);
+                    res.json(listProducts);
                 }
             );
         }
     });
 });
 
-// ---------------------------------------------------------
-// get an instance of the router for api routes
-// ---------------------------------------------------------
+// Get an instance of the router for api routes
 var apiRoutes = express.Router();
 
-// ---------------------------------------------------------
-// authentication (no middleware necessary since this isnt authenticated)
-// ---------------------------------------------------------
-// http://localhost:8080/api/authenticate
+// Authentication (no middleware necessary since this isnt authenticated)
 apiRoutes.post('/authenticate', function(req, res) {
     // find the user
     User.findOne({
@@ -113,9 +89,7 @@ apiRoutes.post('/authenticate', function(req, res) {
     });
 });
 
-// ---------------------------------------------------------
 // Route Middleware to Authenticate and Check Token.
-// ---------------------------------------------------------
 apiRoutes.use(function(req, res, next) {
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.param('token') || req.headers['x-access-token'] || req.session['x-access-token'];
@@ -139,15 +113,15 @@ apiRoutes.use(function(req, res, next) {
 });
 
 // ---------------------------------------------------------
-// authenticated routes
+// Authenticated routes
 // ---------------------------------------------------------
-// Information API.
 apiRoutes.get('/', function(req, res) {
     res.render('login', {
         title: 'Authenticate'
     });
 });
 
+// Route logout user for system.
 apiRoutes.get('/logout', function(req, res) {
     req.session.destroy();
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -158,15 +132,14 @@ apiRoutes.get('/logout', function(req, res) {
     });
 });
 
+// Route create user for database.
 apiRoutes.get('/createUser', function(req, res) {
     res.render('createUser', {
         title: 'Create Users'
     });
 });
 
-// =================================================================
-// Route for create user.===========================================
-// =================================================================
+// Create user for database.
 apiRoutes.post('/setup', function(req, res) {
     if (req.body.name && req.body.password && req.body.admin) {
         // Find a single movie by name.
@@ -202,30 +175,30 @@ apiRoutes.post('/setup', function(req, res) {
     }
 });
 
-// Select All book for database.
-apiRoutes.get('/getBooks', function(req, res) {
+// Select All Product for database.
+apiRoutes.get('/getProducts', function(req, res) {
     connection(req, res, function(err, db) {
         if (err) {
             formattingResponse(res, 503, 'error', 'Connection', err);
         } else {
             db.collection(myCollection).find({}, {}, {}).toArray(
                 function(err, docs) {
-                    var listBooks = [];
+                    var listProducts = [];
                     for (index in docs) {
-                        listBooks.push(docs[index]);
+                        listProducts.push(docs[index]);
                     }
                     //respond to both HTML and JSON. JSON responses require 'Accept: application/json;' in the Request Header
                     res.format({
-                        //HTML response will render the index.jade file in the views folder. We are also setting "books" to be an accessible variable in our jade view
+                        //HTML response will render the index.jade file in the views folder. We are also setting "Products" to be an accessible variable in our jade view
                         html: function() {
                             res.render('index', {
-                                title: 'List of Books',
-                                "books": listBooks
+                                title: 'List of Products',
+                                "products": listProducts
                             });
                         },
-                        //JSON response will show all books in JSON format
+                        //JSON response will show all Products in JSON format
                         json: function() {
-                            res.json(listBooks);
+                            res.json(listProducts);
                         }
                     });
                 }
@@ -234,28 +207,28 @@ apiRoutes.get('/getBooks', function(req, res) {
     });
 });
 
-// Select one book for database by isbn.
-apiRoutes.get('/getOneBook/:isbn', function(req, res) {
-    var isbn = req.params.isbn;
+// Select one Product for database by idProduct.
+apiRoutes.get('/getOneProduct/:idProduct', function(req, res) {
+    var idProduct = req.params.idProduct;
     var edit = req.query.edit === 'true' ? true : false;
     connection(req, res, function(err, db) {
         if (err) {
             formattingResponse(res, 503, 'error', 'Connection', err);
         } else {
             db.collection(myCollection).find({
-                isbn: isbn
+                idProduct: idProduct
             }, {}, {}).toArray(
                 function(err, docs) {
                     if (docs.length == 0) {
-                        formattingResponse(res, 422, 'error', 'getOneBook', "Book with ISBN " + isbn + " not found");
+                        formattingResponse(res, 422, 'error', 'getOneProduct', "Product with idProduct " + idProduct + " not found");
                     } else {
                         if (edit) {
                             res.format({
                                 //HTML response will render the 'edit.jade' template
                                 html: function() {
                                     res.render('edit', {
-                                        title: 'Edit Book',
-                                        "book": docs[0]
+                                        title: 'Edit Product',
+                                        "product": docs[0]
                                     });
                                 },
                                 //JSON response will return the JSON output
@@ -268,8 +241,8 @@ apiRoutes.get('/getOneBook/:isbn', function(req, res) {
                                 //HTML response will render the 'show.jade' template
                                 html: function() {
                                     res.render('show', {
-                                        title: 'Show Book',
-                                        "book": docs[0]
+                                        title: 'Show Product',
+                                        "product": docs[0]
                                     });
                                 },
                                 //JSON response will return the JSON output
@@ -285,54 +258,57 @@ apiRoutes.get('/getOneBook/:isbn', function(req, res) {
     });
 });
 
-apiRoutes.get('/newBook', function(req, res) {
-    res.render('insertBook', {
-        title: 'Insert Book'
+// Route insert one Products in database.
+apiRoutes.get('/newProduct', function(req, res) {
+    res.render('insertProduct', {
+        title: 'Insert Product'
     });
 });
 
-// Insert one or more books in database.
-apiRoutes.post('/insertBooks', function(req, res) {
-    var listBooks = [];
-    var countBooks = 0;
-    var listIsbn = [];
+// Insert one or more Products in database.
+apiRoutes.post('/insertProducts', function(req, res) {
+    var listProducts = [];
+    var countProducts = 0;
+    var listidProduct = [];
     var lintCont;
     connection(req, res, function(err, db) {
         if (err) {
             formattingResponse(res, 503, 'error', 'Connection', err);
         } else {
             if (Object.prototype.toString.call(req.body) === '[object Array]') {
-                countBooks = req.body.length;
-                for (lintCont = 0; lintCont <= countBooks - 1; lintCont++) {
-                    listIsbn.push(req.body[lintCont].isbn);
+                countProducts = req.body.length;
+                for (lintCont = 0; lintCont <= countProducts - 1; lintCont++) {
+                    listidProduct.push(req.body[lintCont].idProduct);
                 }
-                listBooks = req.body;
+                listProducts = req.body;
             } else {
-                listBooks.push({
+                listProducts.push({
                     'name': req.body.name,
-                    'isbn': req.body.isbn,
-                    'author': req.body.author,
-                    'pages': req.body.pages
+                    'idProduct': req.body.idProduct,
+                    'description': req.body.description,
+                    'amount': req.body.amount,
+                    'category': req.body.category,
+                    'price': req.body.price
                 });
-                listIsbn.push(req.body.isbn);
+                listidProduct.push(req.body.idProduct);
             }
             db.collection(myCollection).find({
-                'isbn': {
-                    '$in': listIsbn
+                'idProduct': {
+                    '$in': listidProduct
                 }
             }).toArray(
                 function(err, docs) {
                     if (docs.length > 0) {
                         var result = docs.map(function(a) {
-                            return a.isbn;
+                            return a.idProduct;
                         });
-                        formattingResponse(res, 422, 'error', 'insertBooks', "Book(s) with ISBN " + result.join(', ') + " already exists.");
+                        formattingResponse(res, 422, 'error', 'insertProducts', "Product(s) with idProduct " + result.join(', ') + " already exists.");
                     } else {
-                        db.collection(myCollection).insert(listBooks, function(err, docs) {
+                        db.collection(myCollection).insert(listProducts, function(err, docs) {
                             if (err) {
                                 formattingResponse(res, 503, 'error', 'Insert', err);
                             } else {
-                                formattingResponse(res, 200, 'success', 'Insert', "Successfully inserted the book into database");
+                                formattingResponse(res, 200, 'success', 'Insert', "Successfully inserted the Product into database");
                             }
                         });
                     }
@@ -342,36 +318,40 @@ apiRoutes.post('/insertBooks', function(req, res) {
     });
 });
 
-// Update a book in database.
-apiRoutes.post('/updateBook/:isbn', function(req, res) {
-    var bookName = req.body.name;
-    var author = req.body.author;
-    var pageCount = req.body.pages;
-    var isbn = req.params.isbn;
+// Update a Product in database.
+apiRoutes.post('/updateProduct/:idProduct', function(req, res) {
+    var ProductName = req.body.name;
+    var description = req.body.description;
+    var amount = req.body.amount;
+    var category = req.body.category;
+    var price = req.body.price;
+    var idProduct = req.params.idProduct;
 
     connection(req, res, function(err, db) {
         if (err) {
             formattingResponse(res, 503, 'error', 'Connection', err);
         } else {
             db.collection(myCollection).find({
-                isbn: isbn
+                idProduct: idProduct
             }, {}, {}).toArray(
                 function(err, docs) {
                     if (docs.length == 0) {
-                        formattingResponse(res, 422, 'error', 'Update', "Book with ISBN " + isbn + " not found");
+                        formattingResponse(res, 422, 'error', 'Update', "Product with idProduct " + idProduct + " not found");
                     } else {
                         db.collection(myCollection).update({
-                            "isbn": isbn
+                            "idProduct": idProduct
                         }, {
-                            'name': bookName,
-                            'author': author,
-                            'pages': pageCount,
-                            'isbn': isbn
+                            'name': ProductName,
+                            'description': description,
+                            'amount': amount,
+                            'idProduct': idProduct,
+                            'category': category,
+                            'price': price
                         }, function(err, docs) {
                             if (err) {
                                 formattingResponse(res, 503, 'error', 'Update', err);
                             } else {
-                                formattingResponse(res, 200, 'success', 'Update', "Successfully update the book into database");
+                                formattingResponse(res, 200, 'success', 'Update', "Successfully update the Product into database");
                             }
                         });
                     }
@@ -381,27 +361,27 @@ apiRoutes.post('/updateBook/:isbn', function(req, res) {
     });
 });
 
-// Delete a book in database.
-apiRoutes.post('/deleteBook/:isbn', function(req, res) {
-    var isbn = req.params.isbn;
+// Delete a Product in database.
+apiRoutes.post('/deleteProduct/:idProduct', function(req, res) {
+    var idProduct = req.params.idProduct;
     connection(req, res, function(err, db) {
         if (err) {
             formattingResponse(res, 503, 'error', 'Connection', err);
         } else {
             db.collection(myCollection).find({
-                isbn: isbn
+                idProduct: idProduct
             }, {}, {}).toArray(
                 function(err, docs) {
                     if (docs.length === 0) {
-                        formattingResponse(res, 422, 'error', 'Delete', "Book with ISBN " + isbn + " not found");
+                        formattingResponse(res, 422, 'error', 'Delete', "Product with idProduct " + idProduct + " not found");
                     } else {
                         db.collection(myCollection).remove({
-                            isbn: docs[0].isbn
+                            idProduct: docs[0].idProduct
                         }, function(err, docs) {
                             if (err) {
                                 formattingResponse(res, 503, 'error', 'Delete', err);
                             } else {
-                                formattingResponse(res, 200, 'success', 'Delete', "Successfully deleted the book into database");
+                                formattingResponse(res, 200, 'success', 'Delete', "Successfully deleted the Product into database");
                             }
                         });
                     }
@@ -423,6 +403,7 @@ function connection(req, res, callback) {
     });
 }
 
+// Function for formatting response of Database.
 function formattingResponse(response, status, view, title, message) {
     response.status(status);
     response.format({
@@ -440,11 +421,9 @@ function formattingResponse(response, status, view, title, message) {
     });
 }
 
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
+// All of our routes will be prefixed with /api
 app.use('/api', apiRoutes);
 
-// START THE SERVER
-// =============================================================================
+// Star the Server
 app.listen(port);
 console.log(clc.cyanBright('Server running on: ') + clc.greenBright('http://localhost:' + port));
