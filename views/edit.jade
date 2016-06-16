@@ -5,16 +5,20 @@ block content
     h1.
       Product ID #{product.idProduct}
     form(action='/api/updateProduct/#{product.idProduct}',method='post',name='updateProduct',enctype='application/x-www-form-urlencoded')
-        p Name:&nbsp;
-            input#inputName(type='text', value='#{product.name}', name='name', style='width:500px;')
-        p Author:&nbsp;
-            input#inputDescription(type='text', value='#{product.description}', name='description', style='width:500px;')
-        p Amount:&nbsp;
-            input#inputPages(type='number', value='#{product.amount}', name='amount', style='width:100px;')
-        p Category:&nbsp;
-            input#inputPages(type='number', value='#{product.category}', name='category', style='width:100px;')
+        p Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#inputName(type='text', value='#{product.name}', name='name', style='width:300px;')
+        p Description:&nbsp;
+            input#inputDescription(type='text', value='#{product.description}', name='description', style='width:800px;')
+        p Amount:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#inputAmount(type='number', value='#{product.amount}', name='amount', style='width:50px;')
+        p Category:&nbsp;&nbsp;&nbsp;
+            input#inputCategory(type='text', value='#{product.category}', name='category', style='width:100px;')
+        p Price:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#inputPrice(type='number', value='#{product.category}', name='category', style='width:100px;')
+        p Url Image:&nbsp;&nbsp;
+            input#inputurlImage(type='text', value='#{product.urlImage}', name='urlImage', style='width:800px;')
         p
-            input(type='hidden',value='PUT',name='_method')
+            input(type='hidden',value='PUT', name='_method')
         p
             button#btnSubmit(type='submit').
               Update

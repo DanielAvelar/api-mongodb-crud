@@ -1,0 +1,37 @@
+extends ./layout
+
+block content
+        a(href='/api/getProducts') Return
+        h1.
+            #{title}
+        form(method='post' enctype='application/x-www-form-urlencoded' action='/api/insertProducts')
+            p 
+            label(for='idProduct') idProduct:&nbsp;&nbsp;&nbsp;
+            input#idProduct(type='number' name='idProduct' style="width: 50px;")
+            br
+            p
+            label(for='name') Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#name(type='text' name='name' style="width: 300px;")
+            br
+            p
+            label(for='description') Description:&nbsp;
+            input#description(type='text' name='description' style="width: 800px;")
+            br
+            p
+            label(for='amount') Amount:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#amount(type='number' name='amount' style="width: 50px;")
+            br
+            p
+            label(for='category') Category:&nbsp;&nbsp;&nbsp;
+            input#category(type='text' name='category' style="width: 100px;")
+            br
+            p
+            label(for='price') Price:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#price(type='number' name='price' style="width: 100px;")
+            br
+            p
+            label(for='urlImage') Url Image:&nbsp;&nbsp;
+            input#urlImage(type='text' name='urlImage' style="width: 800px;")
+            br
+            p
+            button(type='submit') Insert
