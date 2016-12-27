@@ -1,7 +1,7 @@
 {
   "name": "api-mongodb-crud",
   "version": "1.0.0",
-  "description": "",
+  "description": "version 1.0",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
@@ -15,15 +15,24 @@
     "formidable": "^1.0.17",
     "fs": "0.0.2",
     "jade": "^1.11.0",
-    "jsonwebtoken": "^5.7.0",
+    "jsonwebtoken": "^7.2.1",
     "mongodb": "^2.1",
     "mongoose": "^4.4.5",
-    "morgan": "^1.7.0"
+    "morgan": "^1.7.0",
+    "package": "^1.0.1"
   },
   "engines": {
-    "node": "4.4.x",
-    "npm": "2.15.x"
+    "node": "6.9.x",
+    "npm": "3.10.x"
   },
   "author": "Daniel Avelar",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielAvelar/api-mongodb-crud.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DanielAvelar/api-mongodb-crud/issues"
+  },
+  "homepage": "https://github.com/DanielAvelar/api-mongodb-crud"
 }
