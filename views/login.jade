@@ -3,10 +3,10 @@ extends ./layout
 block content
 	h1.
 		#{title}
-	form(action='/api/authenticate',method='post',name='login',enctype='application/x-www-form-urlencoded')
+	form(action='/pages/authenticate',method='post',name='login',enctype='application/x-www-form-urlencoded')
 		p Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			input#inputName(type="text", name="name",placeholder='Name', style='width:200px;')
 		p Password:&nbsp;
 			input#inputPassword(type='password',name='password',placeholder='Password', style='width:200px;')
 		p
-			button#btnSubmit(type="submit") Login
+			button#btnSubmit(type="submit") Enter

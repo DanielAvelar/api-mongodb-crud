@@ -1,6 +1,8 @@
 body {
   padding: 50px;
   font: 15px "Tahoma", Helvetica, Arial, sans-serif;
+  background: #464646;
+  color: white;
 }
 
 a {
@@ -12,5 +14,5 @@ table {
 }
 
 table, th, td {
-    border: 1px solid black;
+    border: 1px solid gold;
 }

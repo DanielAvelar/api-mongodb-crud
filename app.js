@@ -21,6 +21,9 @@ mongoose.connect(config.databaseUsers); // connect to database
 app.use(bodyParser.urlencoded({
   extended: false
 }));
+
+// Route Index.
+app.use('/', require('./routes/index'));
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev')); // use morgan to log requests to the console
 app.use(session({
@@ -32,33 +35,10 @@ app.use(session({
 app.set('superSecret', config.secret); // secret variable
 app.set('view engine', 'jade');
 
-// Route Index.
-app.use('/', require('./routes/index'));
-
-app.get('/login', function(req, res) {
-  res.render('login', {
-    title: 'Authenticate'
-  });
-});
-
+//Route of Login
+app.get('/login', require('./routes/login'));
 // Select All Product for database.
-app.get('/getProductsNoAuth', function(req, res) {
-  connection(req, res, function(err, db) {
-    if (err) {
-      formattingResponse(res, 503, 'error', 'Connection', err);
-    } else {
-      db.collection(myCollection).find({}, {}, {}).toArray(
-        function(err, docs) {
-          var listProducts = [];
-          for (index in docs) {
-            listProducts.push(docs[index]);
-          }
-          res.json(listProducts);
-        }
-      );
-    }
-  });
-});
+app.get('/getProductsNoAuth', require('./routes/getProductsNoAuth'));
 
 // Get an instance of the router for api routes
 var apiRoutes = express.Router();
@@ -418,8 +398,8 @@ function formattingResponse(response, status, view, title, message) {
 }
 
 // All of our routes will be prefixed with /api
-app.use('/api', apiRoutes);
+app.use('/pages', apiRoutes);
 
 // Star the Server
 app.listen(port);
-console.log(clc.cyanBright('Server running on: ') + clc.greenBright('http://localhost:' + port));
+console.log(clc.cyanBright('App listening on port %d in %s mode'), port, app.get('env'));

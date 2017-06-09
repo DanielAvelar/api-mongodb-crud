@@ -1,10 +1,10 @@
 extends ./layout
 
 block content
-    a(href='/api/getBooks') Return
+    a(href='/pages/getProducts') Return
     h1.
         #{title}
-    form(action='/api/setup',method='post',name='createUser',enctype='application/x-www-form-urlencoded')
+    form(action='/pages/setup',method='post',name='createUser',enctype='application/x-www-form-urlencoded')
         p Name:&nbsp;
             input#inputName(type="text", placeholder="ex. john.smith", name="name", style='width:200px;')
         p Password:&nbsp;

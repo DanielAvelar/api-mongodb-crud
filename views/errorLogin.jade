@@ -3,6 +3,6 @@ extends ./layout
 block content
   h1.
     #{title} Error.
-  p #{message}
+  p(style="color: red;") #{message}
   form(action='/login',method='get',name='errorLogin',enctype='application/x-www-form-urlencoded')
    button#btnSubmit(type="submit") continue
