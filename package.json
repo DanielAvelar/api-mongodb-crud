@@ -1,7 +1,7 @@
 {
   "name": "api-mongodb-crud",
-  "version": "1.0.0",
-  "description": "version 1.0",
+  "version": "2.6.12",
+  "description": "version 2.6",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
