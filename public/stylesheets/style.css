@@ -15,5 +15,9 @@ table {
 }
 
 table, th, td {
-    border: 1px solid gold;
+    border: 1px solid #00B7FF;
+}
+
+h1{
+  color: gold;
 }

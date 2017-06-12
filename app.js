@@ -9,6 +9,7 @@ var morgan = require('morgan');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
+var pack = require('./package'); // get our package file
 var User = require('./models/user'); // get our mongoose model
 var dbHost = config.databaseApi;
 var port = process.env.PORT || 54000; // used to create, sign, and verify tokens
@@ -39,6 +40,8 @@ app.set('view engine', 'jade');
 app.get('/login', require('./routes/login'));
 // Select All Product for database.
 app.get('/getProductsNoAuth', require('./routes/getProductsNoAuth'));
+// Route logout user for system.
+app.get('/logout', require('./routes/logout'));
 
 // Get an instance of the router for api routes
 var apiRoutes = express.Router();
@@ -98,17 +101,6 @@ apiRoutes.use(function(req, res, next) {
 // Authenticated routes
 // ---------------------------------------------------------
 apiRoutes.get('/', function(req, res) {
-  res.render('login', {
-    title: 'Authenticate'
-  });
-});
-
-// Route logout user for system.
-apiRoutes.get('/logout', function(req, res) {
-  req.session.destroy();
-  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-  res.header('Expires', '-1');
-  res.header('Pragma', 'no-cache');
   res.render('login', {
     title: 'Authenticate'
   });
@@ -403,3 +395,4 @@ app.use('/pages', apiRoutes);
 // Star the Server
 app.listen(port);
 console.log(clc.cyanBright('App listening on port %d in %s mode'), port, app.get('env'));
+console.log(clc.yellowBright('Api Version: ' + pack.version));
