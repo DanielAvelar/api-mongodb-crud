@@ -16,6 +16,8 @@ var port = process.env.PORT || 54000; // used to create, sign, and verify tokens
 var msg;
 var formidable = require('formidable');
 var fs = require('fs');
+var formattingResponse = require('./routes/formatting');
+var connection = require('./routes/connection');
 
 mongoose.connect(config.databaseUsers); // connect to database
 
@@ -47,11 +49,11 @@ app.get('/logout', require('./routes/logout'));
 var apiRoutes = express.Router();
 
 // Authentication (no middleware necessary since this isnt authenticated)
-apiRoutes.post('/authenticate', function(req, res) {
+apiRoutes.post('/authenticate', function (req, res) {
   // find the user
   User.findOne({
     name: req.body.name
-  }, function(err, user) {
+  }, function (err, user) {
     if (err) formattingResponse(res, 503, 'errorLogin', 'Authenticate', err);
     if (!user) {
       formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. User not found.');
@@ -75,13 +77,13 @@ apiRoutes.post('/authenticate', function(req, res) {
 });
 
 // Route Middleware to Authenticate and Check Token.
-apiRoutes.use(function(req, res, next) {
+apiRoutes.use(function (req, res, next) {
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.param('token') || req.headers['x-access-token'] || req.session['x-access-token'];
   // decode token
   if (token) {
     // verifies secret and checks exp
-    jwt.verify(token, app.get('superSecret'), function(err, decoded) {
+    jwt.verify(token, app.get('superSecret'), function (err, decoded) {
       if (err) {
         formattingResponse(res, 403, 'errorLogin', 'Token Authenticate', 'Failed to authenticate token.');
       } else {
@@ -100,26 +102,26 @@ apiRoutes.use(function(req, res, next) {
 // ---------------------------------------------------------
 // Authenticated routes
 // ---------------------------------------------------------
-apiRoutes.get('/', function(req, res) {
+apiRoutes.get('/', function (req, res) {
   res.render('login', {
     title: 'Authenticate'
   });
 });
 
 // Route create user for database.
-apiRoutes.get('/createUser', function(req, res) {
+apiRoutes.get('/createUser', function (req, res) {
   res.render('createUser', {
     title: 'Create Users'
   });
 });
 
 // Create user for database.
-apiRoutes.post('/setup', function(req, res) {
+apiRoutes.post('/setup', function (req, res) {
   if (req.body.name && req.body.password && req.body.admin) {
     // Find a single movie by name.
     User.find({
       name: req.body.name
-    }, function(err, user) {
+    }, function (err, user) {
       if (err) {
         formattingResponse(res, 422, 'error', 'Create user', err);
       } else {
@@ -132,7 +134,7 @@ apiRoutes.post('/setup', function(req, res) {
             password: req.body.password,
             admin: req.body.admin.toString().toUpperCase() === 'ON' ? true : false
           });
-          newUser.save(function(err) {
+          newUser.save(function (err) {
             if (err) {
               formattingResponse(res, 503, 'error', 'Create user', err);
             } else {
@@ -150,13 +152,13 @@ apiRoutes.post('/setup', function(req, res) {
 });
 
 // Select All Product for database.
-apiRoutes.get('/getProducts', function(req, res) {
-  connection(req, res, function(err, db) {
+apiRoutes.get('/getProducts', function (req, res) {
+  connection(req, res, function (err, db) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
       db.collection(myCollection).find({}, {}, {}).toArray(
-        function(err, docs) {
+        function (err, docs) {
           var listProducts = [];
           for (index in docs) {
             listProducts.push(docs[index]);
@@ -164,14 +166,14 @@ apiRoutes.get('/getProducts', function(req, res) {
           //respond to both HTML and JSON. JSON responses require 'Accept: application/json;' in the Request Header
           res.format({
             //HTML response will render the index.jade file in the views folder. We are also setting "Products" to be an accessible variable in our jade view
-            html: function() {
+            html: function () {
               res.render('index', {
                 title: 'List of Products',
                 "products": listProducts
               });
             },
             //JSON response will show all Products in JSON format
-            json: function() {
+            json: function () {
               res.json(listProducts);
             }
           });
@@ -182,45 +184,45 @@ apiRoutes.get('/getProducts', function(req, res) {
 });
 
 // Select one Product for database by idProduct.
-apiRoutes.get('/getOneProduct/:idProduct', function(req, res) {
+apiRoutes.get('/getOneProduct/:idProduct', function (req, res) {
   var idProduct = req.params.idProduct;
   var edit = req.query.edit === 'true' ? true : false;
-  connection(req, res, function(err, db) {
+  connection(req, res, function (err, db) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
       db.collection(myCollection).find({
         idProduct: idProduct
       }, {}, {}).toArray(
-        function(err, docs) {
+        function (err, docs) {
           if (docs.length == 0) {
             formattingResponse(res, 422, 'error', 'getOneProduct', "Product with idProduct " + idProduct + " not found");
           } else {
             if (edit) {
               res.format({
                 //HTML response will render the 'edit.jade' template
-                html: function() {
+                html: function () {
                   res.render('edit', {
                     title: 'Edit Product',
                     "product": docs[0]
                   });
                 },
                 //JSON response will return the JSON output
-                json: function() {
+                json: function () {
                   res.json(docs[0]);
                 }
               });
             } else {
               res.format({
                 //HTML response will render the 'show.jade' template
-                html: function() {
+                html: function () {
                   res.render('show', {
                     title: 'Show Product',
                     "product": docs[0]
                   });
                 },
                 //JSON response will return the JSON output
-                json: function() {
+                json: function () {
                   res.json(docs[0]);
                 }
               });
@@ -233,7 +235,7 @@ apiRoutes.get('/getOneProduct/:idProduct', function(req, res) {
 });
 
 // Route insert one Products in database.
-apiRoutes.get('/newProduct', function(req, res) {
+apiRoutes.get('/newProduct', function (req, res) {
   res.render('insertProduct', {
     title: 'Insert Product',
     message_erro: ''
@@ -241,13 +243,13 @@ apiRoutes.get('/newProduct', function(req, res) {
 });
 
 // Insert one or more Products in database.
-apiRoutes.post('/insertProducts', function(req, res) {
+apiRoutes.post('/insertProducts', function (req, res) {
   var listProducts = [];
   var countProducts = 0;
   var listidProduct = [];
   var lintCont;
 
-  connection(req, res, function(err, db) {
+  connection(req, res, function (err, db) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
@@ -265,14 +267,14 @@ apiRoutes.post('/insertProducts', function(req, res) {
           '$in': listidProduct
         }
       }).toArray(
-        function(err, docs) {
+        function (err, docs) {
           if (docs.length > 0) {
-            var result = docs.map(function(a) {
+            var result = docs.map(function (a) {
               return a.idProduct;
             });
             formattingResponse(res, 422, 'error', 'insertProducts', "Product(s) with idProduct " + result.join(', ') + " already exists.");
           } else {
-            db.collection(myCollection).insert(listProducts, function(err, docs) {
+            db.collection(myCollection).insert(listProducts, function (err, docs) {
               if (err) {
                 formattingResponse(res, 503, 'error', 'Insert', err);
               } else {
@@ -287,7 +289,7 @@ apiRoutes.post('/insertProducts', function(req, res) {
 });
 
 // Update a Product in database.
-apiRoutes.post('/updateProduct/:idProduct', function(req, res) {
+apiRoutes.post('/updateProduct/:idProduct', function (req, res) {
   var ProductName = req.body.name;
   var description = req.body.description;
   var amount = req.body.amount;
@@ -295,14 +297,14 @@ apiRoutes.post('/updateProduct/:idProduct', function(req, res) {
   var price = req.body.price;
   var idProduct = req.params.idProduct;
 
-  connection(req, res, function(err, db) {
+  connection(req, res, function (err, db) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
       db.collection(myCollection).find({
         idProduct: idProduct
       }, {}, {}).toArray(
-        function(err, docs) {
+        function (err, docs) {
           if (docs.length == 0) {
             formattingResponse(res, 422, 'error', 'Update', "Product with idProduct " + idProduct + " not found");
           } else {
@@ -315,7 +317,7 @@ apiRoutes.post('/updateProduct/:idProduct', function(req, res) {
               'idProduct': idProduct,
               'category': category,
               'price': price
-            }, function(err, docs) {
+            }, function (err, docs) {
               if (err) {
                 formattingResponse(res, 503, 'error', 'Update', err);
               } else {
@@ -330,22 +332,22 @@ apiRoutes.post('/updateProduct/:idProduct', function(req, res) {
 });
 
 // Delete a Product in database.
-apiRoutes.post('/deleteProduct/:idProduct', function(req, res) {
+apiRoutes.post('/deleteProduct/:idProduct', function (req, res) {
   var idProduct = req.params.idProduct;
-  connection(req, res, function(err, db) {
+  connection(req, res, function (err, db) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
       db.collection(myCollection).find({
         idProduct: idProduct
       }, {}, {}).toArray(
-        function(err, docs) {
+        function (err, docs) {
           if (docs.length === 0) {
             formattingResponse(res, 422, 'error', 'Delete', "Product with idProduct " + idProduct + " not found");
           } else {
             db.collection(myCollection).remove({
               idProduct: docs[0].idProduct
-            }, function(err, docs) {
+            }, function (err, docs) {
               if (err) {
                 formattingResponse(res, 503, 'error', 'Delete', err);
               } else {
@@ -359,40 +361,11 @@ apiRoutes.post('/deleteProduct/:idProduct', function(req, res) {
   });
 });
 
-// Function of connection on mongodb.
-function connection(req, res, callback) {
-  MongoClient.connect(dbHost, function(err, db) {
-    if (err) {
-      msg = 'Could not connect to server: ' + err.message.replace('getaddrinfo ENOTFOUND ', '').replace('connect ETIMEDOUT ', '');
-      callback(msg, null);
-    } else {
-      callback(null, db);
-    }
-  });
-}
-
-// Function for formatting response of Database.
-function formattingResponse(response, status, view, title, message) {
-  response.status(status);
-  response.format({
-    //HTML response will render the view template.
-    html: function() {
-      response.render(view, {
-        "title": title,
-        "message": message
-      });
-    },
-    //JSON response will return the JSON output
-    json: function() {
-      response.json(message);
-    }
-  });
-}
-
 // All of our routes will be prefixed with /api
 app.use('/pages', apiRoutes);
 
 // Star the Server
 app.listen(port);
-console.log(clc.cyanBright('App listening on port %d in %s mode'), port, app.get('env'));
+console.log(clc.magentaBright('App listening on port %d'), port);
+console.log(clc.greenBright('Mode %s'), app.get('env'));
 console.log(clc.yellowBright('Api Version: ' + pack.version));
