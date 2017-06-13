@@ -1,5 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
-var config = require('../config'); // get our config file
+var config = require('../configuration/access'); // get our config file
 var dbHost = config.databaseApi;
 
 // Function of connection on mongodb.

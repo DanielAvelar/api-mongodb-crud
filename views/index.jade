@@ -5,7 +5,7 @@ block content
     table(style="border: none;width: 600px;")
         tr 
             td(style="border: none; width: 200px;")
-                a(href='/pages/createUser') Create new user
+                a(href='/pages/newUser') Create new user
             td(style="border: none; width: 200px;")
                 a(href='/pages/newProduct') Insert new product
             td(style="border: none; width: 200px;")
@@ -20,11 +20,11 @@ block content
                 td(style="width: 400px;") #{product.name}
                 td
                     form(method="POST", action="/pages/deleteProduct/#{product.idProduct}")
-                        input(type="image", name="submit", alt="Submit", value="Delete", style="cursor:pointer", src='/images/delete.png', title="Delete")
+                        input(type="submit", id="deleteProduct", value="", style="cursor:pointer; border: solid 0px #000000; background-color: #464646; background-image: url(/images/delete.png); width: 24px; height: 24px;", title="Delete")
                 td
                     form(method="GET", action="/pages/getOneProduct/#{product.idProduct}?edit=true")
                         input(type="hidden", name="edit", value="true")
-                        input(type="image", name="submit", alt="Submit", value="Edit", style="cursor:pointer", src='/images/edit.png', title="Edit")
+                        input(type="submit", id="editProduct", value="", style="cursor:pointer; border: solid 0px #000000; background-color: #464646; background-image: url(/images/edit.png); width: 24px; height: 24px;", title="Edit")
                 td
                     form(method="GET", action="/pages/getOneProduct/#{product.idProduct}")
-                        input(type="image", name="submit", alt="Submit", value="Details", style="cursor:pointer", src='/images/info.png', title="Details")
+                        input(type="submit", id="detailsProduct", value="", style="cursor:pointer; border: solid 0px #000000; background-color: #464646; background-image: url(/images/info.png); width: 24px; height: 24px;", title="Details")

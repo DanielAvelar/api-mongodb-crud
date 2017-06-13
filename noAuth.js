@@ -1,10 +1,8 @@
-var express = require('express');
-var router = express.Router();
-var conn = require('./connection');
+var conn = require('./configuration/connection');
 var myCollection = "products";
 
 /* GET Products No Auth. */
-router.get('/getProductsNoAuth', function (req, res, next) {
+exports.getProductsNoAuth = function (req, res, next) {
     conn(req, res, function(err, db) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
@@ -20,6 +18,4 @@ router.get('/getProductsNoAuth', function (req, res, next) {
       );
     }
   });
-});
-
-module.exports = router;
+};
