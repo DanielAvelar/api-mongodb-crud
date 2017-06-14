@@ -15,9 +15,46 @@ table {
 }
 
 table, th, td {
-    border: 1px solid #00B7FF;
+    border: 1px solid #6a6634;
 }
 
 h1{
   color: gold;
+}
+
+input[type=text] {
+    border: 2px solid white;
+    border-radius: 4px;
+}
+
+input[type=number] {
+    border: 2px solid white;
+    border-radius: 4px;
+}
+
+input[type=password] {
+    border: 2px solid white;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #464646; /* Green */
+    border: 2px solid white;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #989999;
+    color: gold;
+    font-weight: bold;
 }

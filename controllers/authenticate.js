@@ -4,31 +4,35 @@ var User = require('../models/userModel'); // get our mongoose model
 var config = require('../configuration/access'); // get our config file
 
 // Authentication (no middleware necessary since this isnt authenticated)
-exports.authenticate = function(req, res){
+exports.authenticate = function (req, res) {
+  if (User.db.readyState === 0) {
+    formattingResponse(res, 503, 'errorLogin', 'Database', 'Unable to communicate with database');
+  } else {
     // find the user
-  User.findOne({
-    name: req.body.name
-  }, function (err, user) {
-    if (err) formattingResponse(res, 503, 'errorLogin', 'Authenticate', err);
-    if (!user) {
-      formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. User not found.');
-    } else if (user) {
-      // check if password matches
-      if (user.password != req.body.password) {
-        formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. Wrong password.');
-      } else {
-        // if user is found and password is right
-        // create a token
-        var token = jwt.sign(user, config.secret, {
-          expiresIn: 1800 // expires in 30 minutes.
-        });
-        req.session['x-access-token'] = token;
-        res.render('success', {
-          title: 'Authentication'
-        });
+    User.findOne({
+      name: req.body.name
+    }, function (err, user) {
+      if (err) formattingResponse(res, 503, 'errorLogin', 'Authenticate', err);
+      if (!user) {
+        formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. User not found.');
+      } else if (user) {
+        // check if password matches
+        if (user.password != req.body.password) {
+          formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. Wrong password.');
+        } else {
+          // if user is found and password is right
+          // create a token
+          var token = jwt.sign(user, config.secret, {
+            expiresIn: 1800 // expires in 30 minutes.
+          });
+          req.session['x-access-token'] = token;
+          res.render('success', {
+            title: 'Authentication'
+          });
+        }
       }
-    }
-  });
+    });
+  }
 }
 
 exports.checkAuthenticate = function (req, res, next) {
