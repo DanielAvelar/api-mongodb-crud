@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var formattingResponse = require('../configuration/formatting');
-var User = require('../models/user'); // get our mongoose model
+var User = require('../models/userModel'); // get our mongoose model
 var config = require('../configuration/access'); // get our config file
 
 // Authentication (no middleware necessary since this isnt authenticated)

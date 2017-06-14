@@ -1,5 +1,5 @@
 var formattingResponse = require('../configuration/formatting');
-var User = require('../models/user'); // get our mongoose model
+var User = require('../models/userModel'); // get our mongoose model
 
 // Route new user.
 exports.newUser = function(req, res){

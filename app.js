@@ -3,10 +3,8 @@ var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var clc = require('cli-color');
-var MongoClient = require('mongodb').MongoClient;
 var morgan = require('morgan');
-var mongoose = require('mongoose');
-var config = require('./configuration/access'); // get our config file
+var mongoose = require('./configuration/mongooseConnection');
 var pack = require('./package'); // get our package file
 var port = process.env.PORT || 54000; // used to create, sign, and verify tokens
 
@@ -20,8 +18,6 @@ var noAuth = require('./noAuth');
 var login = require('./login');
 var logout = require('./logout');
 var index = require('./index');
-
-mongoose.connect(config.databaseUsers); // connect to database
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -84,6 +80,6 @@ apiRoutes.route('/deleteProduct/:idProduct').post(productController.deleteProduc
 
 // Star the Server
 app.listen(port);
-console.log(clc.redBright('App listening on port %d'), port);
-console.log(clc.greenBright('Mode %s'), app.get('env'));
-console.log(clc.yellowBright('Api Version: ' + pack.version));
+console.log(clc.magenta('App listening on port %d'), port);
+console.log(clc.magenta('Mode %s'), app.get('env'));
+console.log(clc.magenta('Api Version: ' + pack.version));
