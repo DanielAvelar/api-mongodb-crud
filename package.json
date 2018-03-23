@@ -22,7 +22,8 @@
     "package": "^1.0.1"
   },
   "engines": {
-    "node": "8.9.x"
+    "node": "6.9.x",
+    "npm": "3.10.x"
   },
   "author": "Daniel Avelar",
   "license": "ISC",
