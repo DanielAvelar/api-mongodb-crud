@@ -16,8 +16,8 @@
     "fs": "0.0.2",
     "jade": "^1.11.0",
     "jsonwebtoken": "^7.4.1",
-    "mongodb": "^3.0",
-    "mongoose": "^5.0.11",
+    "mongodb": "^2.2",
+    "mongoose": "^4.10.5",
     "morgan": "^1.8.2",
     "package": "^1.0.1"
   },
