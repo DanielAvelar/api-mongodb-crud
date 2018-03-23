@@ -1,7 +1,7 @@
 {
   "name": "api-mongodb-crud",
-  "version": "2.6.14",
-  "description": "version 2.6",
+  "version": "3.3.18",
+  "description": "version 3.3",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
@@ -16,8 +16,8 @@
     "fs": "0.0.2",
     "jade": "^1.11.0",
     "jsonwebtoken": "^8.2.0",
-    "mongodb": "^2.2",
-    "mongoose": "^4.10.5",
+    "mongodb": "^2.2.35",
+    "mongoose": "^5.0.11",
     "morgan": "^1.8.2",
     "package": "^1.0.1"
   },
