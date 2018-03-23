@@ -22,7 +22,7 @@ exports.authenticate = function (req, res) {
         } else {
           // if user is found and password is right
           // create a token
-          var token = jwt.sign(user, config.secret, {
+          var token = jwt.sign(user.toJSON(), config.secret, {
             expiresIn: 1800 // expires in 30 minutes.
           });
           req.session['x-access-token'] = token;
