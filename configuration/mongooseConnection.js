@@ -11,7 +11,7 @@ var mongoose = require( 'mongoose' );
 var dbURI = config.databaseUsers; 
 
 // Create the database connection 
-mongoose.connect(dbURI); 
+mongoose.connect(dbURI, { useMongoClient: true }); 
 
 // CONNECTION EVENTS
 // When successfully connected
