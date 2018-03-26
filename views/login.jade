@@ -6,8 +6,8 @@ block content
 		#{title}
 	form(action='/pages/authenticate',method='post',name='login',enctype='application/x-www-form-urlencoded')
 		p Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			input#inputName(type="text", name="name",placeholder='Name', style='width:200px;')
+			input#inputName(type="text", required=true, name="name",placeholder='Name', style='width:200px;')
 		p Password:&nbsp;&nbsp;
-			input#inputPassword(type='password',name='password',placeholder='Password', style='width:200px;')
+			input#inputPassword(type='password', required=true, name='password',placeholder='Password', style='width:200px;')
 		p
 			button#btnSubmit(type="submit") Enter
