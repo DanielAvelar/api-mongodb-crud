@@ -16,15 +16,15 @@ block content
     table
         - each product, i in products
             tr
-                td(style="width: 50px; font-weight: bold; text-align: center;") #{product.idProduct}
-                td(style="width: 400px;") #{product.name}
+                td(style="width: 50px; font-weight: bold; text-align: center; color: gold;") #{product.idProduct}
+                td(style="width: 500px; font-weight: bold; font-style: italic;") #{product.name}
                 td
                     form(method="POST", action="/pages/deleteProduct/#{product.idProduct}")
-                        input(type="submit", id="deleteProduct", value="", style="cursor:pointer; border: solid 0px #000000; background-color: #464646; background-image: url(/images/delete.png); width: 24px; height: 24px;", title="Delete")
+                        input(type="submit", id="deleteProduct", value="", style="cursor:pointer; border: solid 0px #000000; background-color: transparent; background-image: url(/images/delete.png); width: 24px; height: 24px;", title="Delete")
                 td
                     form(method="GET", action="/pages/getOneProduct/#{product.idProduct}?edit=true")
                         input(type="hidden", name="edit", value="true")
-                        input(type="submit", id="editProduct", value="", style="cursor:pointer; border: solid 0px #000000; background-color: #464646; background-image: url(/images/edit.png); width: 24px; height: 24px;", title="Edit")
+                        input(type="submit", id="editProduct", value="", style="cursor:pointer; border: solid 0px #000000; background-color: transparent; background-image: url(/images/edit.png); width: 24px; height: 24px;", title="Edit")
                 td
                     form(method="GET", action="/pages/getOneProduct/#{product.idProduct}?edit=false")
-                        input(type="submit", id="detailsProduct", value="", style="cursor:pointer; border: solid 0px #000000; background-color: #464646; background-image: url(/images/info.png); width: 24px; height: 24px;", title="Details")
+                        input(type="submit", id="detailsProduct", value="", style="cursor:pointer; border: solid 0px #000000; background-color: transparent; background-image: url(/images/info.png); width: 24px; height: 24px;", title="Details")

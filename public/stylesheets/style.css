@@ -1,8 +1,8 @@
 body {
   padding: 50px;
   font: 15px "Tahoma", Helvetica, Arial, sans-serif;
-  background: #464646;
-  color: white;
+  background: #3d5476;
+  color: #def9fb;
 }
 
 a {
@@ -15,7 +15,7 @@ table {
 }
 
 table, th, td {
-    border: 1px solid #6a6634;
+    border: 1px solid #00B7FF;
 }
 
 h1{
@@ -38,7 +38,7 @@ input[type=password] {
 }
 
 button {
-    background-color: #464646; /* Green */
+    background-color: #3d5476;
     border: 2px solid white;
     color: white;
     padding: 5px 10px;
