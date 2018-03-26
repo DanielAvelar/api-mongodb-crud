@@ -1,14 +1,19 @@
 var formattingResponse = require('../configuration/formatting');
 var connection = require('../configuration/connection');
-var myCollection = "products";
+const myCollection = "products";
+// Database Name
+const dbName = 'data-api';
 
 // Select All Product for database.
 exports.getProducts = function (req, res) {
-  connection(req, res, function (err, db) {
+  connection(req, res, function (err, client) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
-      db.collection(myCollection).find({}, {}, {}).toArray(
+      const db = client.db(dbName);
+      // Get the documents collection
+      const collection = db.collection(myCollection);
+      collection.find({}).toArray(
         function (err, docs) {
           var listProducts = [];
           for (index in docs) {
@@ -31,6 +36,7 @@ exports.getProducts = function (req, res) {
         }
       );
     }
+    client.close();
   });
 };
 
@@ -38,13 +44,16 @@ exports.getProducts = function (req, res) {
 exports.getOneProduct = function (req, res) {
   var idProduct = req.params.idProduct;
   var edit = req.query.edit === 'true' ? true : false;
-  connection(req, res, function (err, db) {
+  connection(req, res, function (err, client) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
-      db.collection(myCollection).find({
+      const db = client.db(dbName);
+      // Get the documents collection
+      const collection = db.collection(myCollection);
+      collection.find({
         idProduct: idProduct
-      }, {}, {}).toArray(
+      }).toArray(
         function (err, docs) {
           if (docs.length == 0) {
             formattingResponse(res, 422, 'error', 'getOneProduct', "Product with idProduct " + idProduct + " not found");
@@ -82,6 +91,7 @@ exports.getOneProduct = function (req, res) {
         }
       );
     }
+    client.close();
   });
 };
 
@@ -94,13 +104,13 @@ exports.newProduct = function (req, res) {
 };
 
 // Insert one or more Products in mongodb.
-exports.insertProducts = function(req, res){
+exports.insertProducts = function (req, res) {
   var listProducts = [];
   var countProducts = 0;
   var listidProduct = [];
   var lintCont;
 
-  connection(req, res, function (err, db) {
+  connection(req, res, function (err, client) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
@@ -113,7 +123,10 @@ exports.insertProducts = function(req, res){
         'price': req.body.price
       });
       listidProduct.push(req.body.idProduct);
-      db.collection(myCollection).find({
+      const db = client.db(dbName);
+      // Get the documents collection
+      const collection = db.collection(myCollection);
+      collection.find({
         'idProduct': {
           '$in': listidProduct
         }
@@ -125,7 +138,7 @@ exports.insertProducts = function(req, res){
             });
             formattingResponse(res, 422, 'error', 'insertProducts', "Product(s) with idProduct " + result.join(', ') + " already exists.");
           } else {
-            db.collection(myCollection).insert(listProducts, function (err, docs) {
+            collection.insert(listProducts, function (err, docs) {
               if (err) {
                 formattingResponse(res, 503, 'error', 'Insert', err);
               } else {
@@ -140,7 +153,7 @@ exports.insertProducts = function(req, res){
 }
 
 // Update a Product in mongodb.
-exports.updateProduct = function(req, res){
+exports.updateProduct = function (req, res) {
   var ProductName = req.body.name;
   var description = req.body.description;
   var amount = req.body.amount;
@@ -149,18 +162,22 @@ exports.updateProduct = function(req, res){
   var urlImage = req.body.urlImage;
   var idProduct = req.params.idProduct;
 
-  connection(req, res, function (err, db) {
+  connection(req, res, function (err, client) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
-      db.collection(myCollection).find({
+      const db = client.db(dbName);
+      // Get the documents collection
+      const collection = db.collection(myCollection);
+      collection.find({
         idProduct: idProduct
       }, {}, {}).toArray(
         function (err, docs) {
           if (docs.length == 0) {
             formattingResponse(res, 422, 'error', 'Update', "Product with idProduct " + idProduct + " not found");
           } else {
-            db.collection(myCollection).update({
+            // Get the documents collection
+            collection.update({
               "idProduct": idProduct
             }, {
               'name': ProductName,
@@ -174,6 +191,7 @@ exports.updateProduct = function(req, res){
               if (err) {
                 formattingResponse(res, 503, 'error', 'Update', err);
               } else {
+                client.close();
                 formattingResponse(res, 200, 'success', 'Update', "Successfully update the Product into database");
               }
             });
@@ -185,25 +203,29 @@ exports.updateProduct = function(req, res){
 }
 
 // Delete a Product in mongodb.
-exports.deleteProduct = function(req, res){
+exports.deleteProduct = function (req, res) {
   var idProduct = req.params.idProduct;
-  connection(req, res, function (err, db) {
+  connection(req, res, function (err, client) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
-      db.collection(myCollection).find({
+      const db = client.db(dbName);
+      // Get the documents collection
+      const collection = db.collection(myCollection);
+      collection.find({
         idProduct: idProduct
-      }, {}, {}).toArray(
+      }).toArray(
         function (err, docs) {
           if (docs.length === 0) {
             formattingResponse(res, 422, 'error', 'Delete', "Product with idProduct " + idProduct + " not found");
           } else {
-            db.collection(myCollection).remove({
+            collection.deleteOne({
               idProduct: docs[0].idProduct
             }, function (err, docs) {
               if (err) {
                 formattingResponse(res, 503, 'error', 'Delete', err);
               } else {
+                client.close();
                 formattingResponse(res, 200, 'success', 'Delete', "Successfully deleted the Product into database");
               }
             });
