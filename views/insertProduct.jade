@@ -7,27 +7,27 @@ block content
         form(method='post' enctype='application/x-www-form-urlencoded' action='/pages/insertProducts')
             p 
             label(for='idProduct') idProduct:&nbsp;&nbsp;&nbsp;
-            input#idProduct(type='number' name='idProduct' style="width: 50px;")
+            input#idProduct(type='number' required=true name='idProduct' style="width: 50px;")
             br
             p
             label(for='name') Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            input#name(type='text' name='name' style="width: 300px;")
+            input#name(type='text' required=true name='name' style="width: 300px;")
             br
             p
             label(for='description') Description:&nbsp;
-            input#description(type='text' name='description' style="width: 800px;")
+            input#description(type='text' required=true name='description' style="width: 800px;")
             br
             p
             label(for='amount') Amount:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            input#amount(type='number' name='amount' style="width: 50px;")
+            input#amount(type='number' required=true name='amount' style="width: 50px;")
             br
             p
             label(for='category') Category:&nbsp;&nbsp;&nbsp;
-            input#category(type='text' name='category' style="width: 100px;")
+            input#category(type='text' required=true name='category' style="width: 100px;")
             br
             p
             label(for='price') Price:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            input#price(type='number' name='price' style="width: 100px;")
+            input#price(type='number' required=true name='price' style="width: 100px;")
             br
             p
             label(for='urlImage') Url Image:&nbsp;&nbsp;
