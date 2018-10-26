@@ -1,14 +1,19 @@
-var conn = require('./configuration/connection');
-var myCollection = "products";
+var connection = require('./configuration/connection');
+const myCollection = "products";
+// Database Name
+const dbName = 'data-api';
 
-/* GET Products No Auth. */
-exports.getProductsNoAuth = function (req, res, next) {
-    conn(req, res, function(err, db) {
+// Select All Product for database.
+exports.getProductsNoAuth = function (req, res) {
+  connection(req, res, function (err, client) {
     if (err) {
       formattingResponse(res, 503, 'error', 'Connection', err);
     } else {
-      db.collection(myCollection).find({}, {}, {}).toArray(
-        function(err, docs) {
+      const db = client.db(dbName);
+      // Get the documents collection
+      const collection = db.collection(myCollection);
+      collection.find({}).toArray(
+        function (err, docs) {
           var listProducts = [];
           for (index in docs) {
             listProducts.push(docs[index]);
@@ -17,5 +22,6 @@ exports.getProductsNoAuth = function (req, res, next) {
         }
       );
     }
+    client.close();
   });
 };

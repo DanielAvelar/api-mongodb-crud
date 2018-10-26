@@ -80,6 +80,6 @@ apiRoutes.route('/deleteProduct/:idProduct').post(productController.deleteProduc
 
 // Star the Server
 app.listen(port);
-console.log(clc.magenta('App listening on port %d'), port);
-console.log(clc.magenta('Mode %s'), app.get('env'));
-console.log(clc.magenta('Api Version: ' + pack.version));
+console.log(clc.yellowBright('App listening on port %d'), port);
+console.log(clc.yellowBright('Mode %s'), app.get('env'));
+console.log(clc.yellowBright('Api Version: ' + pack.version));
