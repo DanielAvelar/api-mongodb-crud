@@ -18,7 +18,10 @@ exports.getProductsNoAuth = function (req, res) {
           for (index in docs) {
             listProducts.push(docs[index]);
           }
-          res.json(listProducts);
+          retorno = {
+            Products : listProducts
+          }
+          res.json(retorno);
         }
       );
     }
