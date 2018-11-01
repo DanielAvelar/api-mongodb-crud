@@ -19,20 +19,27 @@ exports.getProducts = function (req, res) {
           for (index in docs) {
             listProducts.push(docs[index]);
           }
-          //respond to both HTML and JSON. JSON responses require 'Accept: application/json;' in the Request Header
-          res.format({
-            //HTML response will render the index.jade file in the views folder. We are also setting "Products" to be an accessible variable in our jade view
-            html: function () {
-              res.render('index', {
-                title: 'List of Products',
-                "products": listProducts
-              });
-            },
-            //JSON response will show all Products in JSON format
-            json: function () {
-              res.json(listProducts);
-            }
-          });
+
+          if (req.query.retornoJson === "true") {
+            res.send({
+              products: listProducts
+            })
+          } else {
+            //respond to both HTML and JSON. JSON responses require 'Accept: application/json;' in the Request Header
+            res.format({
+              //HTML response will render the index.jade file in the views folder. We are also setting "Products" to be an accessible variable in our jade view
+              html: function () {
+                res.render('index', {
+                  title: 'List of Products',
+                  "products": listProducts
+                });
+              },
+              //JSON response will show all Products in JSON format
+              json: function () {
+                res.json(listProducts);
+              }
+            });
+          }
         }
       );
     }
@@ -46,7 +53,7 @@ exports.getOneProduct = function (req, res) {
   var edit = req.query.edit === 'true' ? true : false;
   connection(req, res, function (err, client) {
     if (err) {
-      formattingResponse(res, 503, 'error', 'Connection', err);
+      formattingResponse(res, 503, 'error', 'Connection', err, req.query.retornoJson);
     } else {
       const db = client.db(dbName);
       // Get the documents collection
@@ -56,36 +63,48 @@ exports.getOneProduct = function (req, res) {
       }).toArray(
         function (err, docs) {
           if (docs.length == 0) {
-            formattingResponse(res, 422, 'error', 'getOneProduct', "Product with idProduct " + idProduct + " not found");
+            formattingResponse(res, 422, 'error', 'getOneProduct', "Product with idProduct " + idProduct + " not found", req.query.retornoJson);
           } else {
             if (edit) {
-              res.format({
-                //HTML response will render the 'edit.jade' template
-                html: function () {
-                  res.render('edit', {
-                    title: 'Edit Product',
-                    "product": docs[0]
-                  });
-                },
-                //JSON response will return the JSON output
-                json: function () {
-                  res.json(docs[0]);
-                }
-              });
+              if (req.query.retornoJson === "true") {
+                res.send({
+                  product: docs[0]
+                })
+              } else {
+                res.format({
+                  //HTML response will render the 'edit.jade' template
+                  html: function () {
+                    res.render('edit', {
+                      title: 'Edit Product',
+                      "product": docs[0]
+                    });
+                  },
+                  //JSON response will return the JSON output
+                  json: function () {
+                    res.json(docs[0]);
+                  }
+                });
+              }
             } else {
-              res.format({
-                //HTML response will render the 'show.jade' template
-                html: function () {
-                  res.render('show', {
-                    title: 'Show Product',
-                    "product": docs[0]
-                  });
-                },
-                //JSON response will return the JSON output
-                json: function () {
-                  res.json(docs[0]);
-                }
-              });
+              if (req.query.retornoJson === "true") {
+                res.send({
+                  product: docs[0]
+                })
+              } else {
+                res.format({
+                  //HTML response will render the 'show.jade' template
+                  html: function () {
+                    res.render('show', {
+                      title: 'Show Product',
+                      "product": docs[0]
+                    });
+                  },
+                  //JSON response will return the JSON output
+                  json: function () {
+                    res.json(docs[0]);
+                  }
+                });
+              }
             }
           }
         }
@@ -106,9 +125,7 @@ exports.newProduct = function (req, res) {
 // Insert one or more Products in mongodb.
 exports.insertProducts = function (req, res) {
   var listProducts = [];
-  var countProducts = 0;
   var listidProduct = [];
-  var lintCont;
 
   connection(req, res, function (err, client) {
     if (err) {
@@ -136,13 +153,13 @@ exports.insertProducts = function (req, res) {
             var result = docs.map(function (a) {
               return a.idProduct;
             });
-            formattingResponse(res, 422, 'error', 'insertProducts', "Product(s) with idProduct " + result.join(', ') + " already exists.");
+            formattingResponse(res, 422, 'error', 'insertProducts', "Product(s) with idProduct " + result.join(', ') + " already exists.", req.query.retornoJson);
           } else {
             collection.insert(listProducts, function (err, docs) {
               if (err) {
-                formattingResponse(res, 503, 'error', 'Insert', err);
+                formattingResponse(res, 503, 'error', 'Insert', err, req.query.retornoJson);
               } else {
-                formattingResponse(res, 200, 'success', 'Insert', "Successfully inserted the Product into database");
+                formattingResponse(res, 200, 'success', 'Insert', "Successfully inserted the Product into database", req.query.retornoJson);
               }
             });
           }
@@ -164,7 +181,7 @@ exports.updateProduct = function (req, res) {
 
   connection(req, res, function (err, client) {
     if (err) {
-      formattingResponse(res, 503, 'error', 'Connection', err);
+      formattingResponse(res, 503, 'error', 'Connection', err, req.query.retornoJson);
     } else {
       const db = client.db(dbName);
       // Get the documents collection
@@ -174,7 +191,7 @@ exports.updateProduct = function (req, res) {
       }, {}, {}).toArray(
         function (err, docs) {
           if (docs.length == 0) {
-            formattingResponse(res, 422, 'error', 'Update', "Product with idProduct " + idProduct + " not found");
+            formattingResponse(res, 422, 'error', 'Update', "Product with idProduct " + idProduct + " not found", req.query.retornoJson);
           } else {
             // Get the documents collection
             collection.update({
@@ -189,10 +206,10 @@ exports.updateProduct = function (req, res) {
               'urlImage': urlImage
             }, function (err, docs) {
               if (err) {
-                formattingResponse(res, 503, 'error', 'Update', err);
+                formattingResponse(res, 503, 'error', 'Update', err, req.query.retornoJson);
               } else {
                 client.close();
-                formattingResponse(res, 200, 'success', 'Update', "Successfully update the Product into database");
+                formattingResponse(res, 200, 'success', 'Update', "Successfully update the Product into database", req.query.retornoJson);
               }
             });
           }
@@ -217,16 +234,16 @@ exports.deleteProduct = function (req, res) {
       }).toArray(
         function (err, docs) {
           if (docs.length === 0) {
-            formattingResponse(res, 422, 'error', 'Delete', "Product with idProduct " + idProduct + " not found");
+            formattingResponse(res, 422, 'error', 'Delete', "Product with idProduct " + idProduct + " not found", req.query.retornoJson);
           } else {
             collection.deleteOne({
               idProduct: docs[0].idProduct
             }, function (err, docs) {
               if (err) {
-                formattingResponse(res, 503, 'error', 'Delete', err);
+                formattingResponse(res, 503, 'error', 'Delete', err, req.query.retornoJson);
               } else {
                 client.close();
-                formattingResponse(res, 200, 'success', 'Delete', "Successfully deleted the Product into database");
+                formattingResponse(res, 200, 'success', 'Delete', "Successfully deleted the Product into database", req.query.retornoJson);
               }
             });
           }

@@ -12,23 +12,30 @@ exports.authenticate = function (req, res) {
     User.findOne({
       name: req.body.name
     }, function (err, user) {
-      if (err) formattingResponse(res, 503, 'errorLogin', 'Authenticate', err);
+      if (err) formattingResponse(res, 503, 'errorLogin', 'Authenticate', err, req.query.retornoJson);
       if (!user) {
-        formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. User not found.');
+        formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. User not found.', req.query.retornoJson);
       } else if (user) {
         // check if password matches
         if (user.password != req.body.password) {
-          formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. Wrong password.');
+          formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. Wrong password.', req.query.retornoJson);
         } else {
           // if user is found and password is right
           // create a token
           var token = jwt.sign(user.toJSON(), config.secret, {
-            expiresIn: 1800 // expires in 30 minutes.
+            expiresIn: 600 // expires in 10 minutes.
           });
           req.session['x-access-token'] = token;
-          res.render('success', {
-            title: 'Authentication'
-          });
+
+          if(req.query.retornoJson === "true"){
+            res.send({
+              authentication : true
+            })
+          }else{
+            res.render('success', {
+              title: 'Authentication'
+            });
+          }
         }
       }
     });
