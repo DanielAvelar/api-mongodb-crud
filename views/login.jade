@@ -4,7 +4,7 @@ block content
 	a(href='/') Home
 	h1.
 		#{title}
-	form(action='/pages/authenticate',method='post',name='login',enctype='application/x-www-form-urlencoded')
+	form(action='/pages/authenticate', method='post', name='login')
 		p Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			input#inputName(type="text", required=true, name="name",placeholder='Name', style='width:200px;')
 		p Password:&nbsp;&nbsp;

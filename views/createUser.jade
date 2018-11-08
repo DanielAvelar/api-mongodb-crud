@@ -4,7 +4,7 @@ block content
     a(href='/pages/getProducts') Return
     h1.
         #{title}
-    form(action='/pages/createUser',method='post',name='createUser',enctype='application/x-www-form-urlencoded')
+    form(action='/pages/createUser',method='post',name='createUser')
         p Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             input#inputName(type="text", required=true, placeholder="ex. john.smith", name="name", style='width:200px;')
         p Password:&nbsp;

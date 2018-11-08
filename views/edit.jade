@@ -4,7 +4,7 @@ block content
     a(href='/pages/getProducts') Return
     h1.
       Product ID #{product.idProduct}
-    form(action='/pages/updateProduct/#{product.idProduct}',method='post',name='updateProduct',enctype='application/x-www-form-urlencoded')
+    form(action='/pages/updateProduct/#{product.idProduct}',method='post',name='updateProduct')
         p Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             input#inputName(type='text', required=true, value='#{product.name}', name='name', style='width:300px;' maxlength='40')
         p Description:&nbsp;

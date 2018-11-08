@@ -16,10 +16,26 @@ exports.createUser = function (req, res) {
       name: req.body.name
     }, function (err, user) {
       if (err) {
-        formattingResponse(res, 422, 'error', 'Create user', err);
+        if (req.query.retornoJson === "true") {
+          res.status(422)
+          res.send({
+            message: err,
+            retorno: false
+          })
+        } else {
+          formattingResponse(res, 422, 'error', 'Create user', err);
+        }
       } else {
         if (user.length > 0) {
-          formattingResponse(res, 503, 'error', 'Create user', 'User exists');
+          if (req.query.retornoJson === "true") {
+            res.status(503)
+            res.send({
+              message: 'User exists',
+              retorno: false
+            })
+          } else {
+            formattingResponse(res, 503, 'error', 'Create user', 'User exists');
+          }
         } else {
           // create a sample user
           var newUser = new User({
@@ -29,11 +45,27 @@ exports.createUser = function (req, res) {
           });
           newUser.save(function (err) {
             if (err) {
-              formattingResponse(res, 503, 'error', 'Create user', err);
+              if (req.query.retornoJson === "true") {
+                res.status(503)
+                res.send({
+                  message: err,
+                  retorno: false
+                })
+              } else {
+                formattingResponse(res, 503, 'error', 'Create user', err);
+              }
             } else {
-              res.render('success', {
-                title: 'User create'
-              });
+              if (req.query.retornoJson === "true") {
+                res.status(200)
+                res.send({
+                  message: 'success',
+                  retorno: true
+                })
+              } else {
+                res.render('success', {
+                  title: 'User create'
+                });
+              }
             }
           });
         }

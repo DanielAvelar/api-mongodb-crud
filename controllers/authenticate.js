@@ -6,19 +6,53 @@ var config = require('../configuration/access'); // get our config file
 // Authentication (no middleware necessary since this isnt authenticated)
 exports.authenticate = function (req, res) {
   if (User.db.readyState === 0) {
-    formattingResponse(res, 503, 'errorLogin', 'Database', 'Unable to communicate with database');
+    if (req.query.retornoJson === "true") {
+      res.status(503)
+      res.send({
+        message: 'Unable to communicate with database',
+        retorno: false
+      })
+    } else {
+      formattingResponse(res, 503, 'errorLogin', 'Database', 'Unable to communicate with database');
+    }
   } else {
     // find the user
     User.findOne({
       name: req.body.name
     }, function (err, user) {
-      if (err) formattingResponse(res, 503, 'errorLogin', 'Authenticate', err, req.query.retornoJson);
+      if (err) {
+        if (req.query.retornoJson === "true") {
+          res.status(503)
+          res.send({
+            message: err,
+            retorno: false
+          })
+        } else {
+          formattingResponse(res, 503, 'errorLogin', 'Authenticate', err);
+        }
+      }
       if (!user) {
-        formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. User not found.', req.query.retornoJson);
+        if (req.query.retornoJson === "true") {
+          res.status(401)
+          res.send({
+            message: 'Authentication failed. User not found.',
+            retorno: false
+          })
+        } else {
+          formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. User not found.');
+        }
       } else if (user) {
         // check if password matches
         if (user.password != req.body.password) {
-          formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. Wrong password.', req.query.retornoJson);
+          if (req.query.retornoJson === "true") {
+            res.status(401)
+            res.send({
+              message: 'Authentication failed. Wrong password.',
+              retorno: false
+            })
+          } else {
+            formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. Wrong password.');
+          }
         } else {
           // if user is found and password is right
           // create a token
@@ -32,9 +66,17 @@ exports.authenticate = function (req, res) {
               authentication : true
             })
           }else{
-            res.render('success', {
-              title: 'Authentication'
-            });
+            if (req.query.retornoJson === "true") {
+              res.status(200)
+              res.send({
+                message: 'Success',
+                retorno: true
+              })
+            } else {
+              res.render('success', {
+                title: 'Authentication'
+              });
+            }
           }
         }
       }

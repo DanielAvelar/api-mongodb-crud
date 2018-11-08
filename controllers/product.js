@@ -8,7 +8,15 @@ const dbName = 'data-api';
 exports.getProducts = function (req, res) {
   connection(req, res, function (err, client) {
     if (err) {
-      formattingResponse(res, 503, 'error', 'Connection', err);
+      if (req.query.retornoJson === "true") {
+        res.status(503)
+        res.send({
+          message: err,
+          products: []
+        })
+      } else {
+        formattingResponse(res, 503, 'error', 'Connection', err);
+      }
     } else {
       const db = client.db(dbName);
       // Get the documents collection
@@ -19,7 +27,6 @@ exports.getProducts = function (req, res) {
           for (index in docs) {
             listProducts.push(docs[index]);
           }
-
           if (req.query.retornoJson === "true") {
             res.send({
               products: listProducts
@@ -53,7 +60,15 @@ exports.getOneProduct = function (req, res) {
   var edit = req.query.edit === 'true' ? true : false;
   connection(req, res, function (err, client) {
     if (err) {
-      formattingResponse(res, 503, 'error', 'Connection', err, req.query.retornoJson);
+      if (req.query.retornoJson === "true") {
+        res.status(503)
+        res.send({
+          message: err,
+          product: []
+        })
+      } else {
+        formattingResponse(res, 503, 'error', 'Connection', err);
+      }
     } else {
       const db = client.db(dbName);
       // Get the documents collection
@@ -63,11 +78,21 @@ exports.getOneProduct = function (req, res) {
       }).toArray(
         function (err, docs) {
           if (docs.length == 0) {
-            formattingResponse(res, 422, 'error', 'getOneProduct', "Product with idProduct " + idProduct + " not found", req.query.retornoJson);
+            if (req.query.retornoJson === "true") {
+              res.status(422)
+              res.send({
+                message: "Product with idProduct " + idProduct + " not found",
+                product: []
+              })
+            } else {
+              formattingResponse(res, 422, 'error', 'getOneProduct', "Product with idProduct " + idProduct + " not found");
+            }
           } else {
             if (edit) {
               if (req.query.retornoJson === "true") {
+                res.status(200);
                 res.send({
+                  message: 'Success',
                   product: docs[0]
                 })
               } else {
@@ -87,7 +112,9 @@ exports.getOneProduct = function (req, res) {
               }
             } else {
               if (req.query.retornoJson === "true") {
+                res.status(200);
                 res.send({
+                  message: 'Success',
                   product: docs[0]
                 })
               } else {
@@ -109,8 +136,8 @@ exports.getOneProduct = function (req, res) {
           }
         }
       );
+      client.close();
     }
-    client.close();
   });
 };
 
@@ -129,7 +156,15 @@ exports.insertProducts = function (req, res) {
 
   connection(req, res, function (err, client) {
     if (err) {
-      formattingResponse(res, 503, 'error', 'Connection', err);
+      if (req.query.retornoJson === "true") {
+        res.status(503)
+        res.send({
+          message: err,
+          retorno: false
+        })
+      } else {
+        formattingResponse(res, 503, 'error', 'Connection', err);
+      }
     } else {
       listProducts.push({
         'name': req.body.name,
@@ -153,18 +188,43 @@ exports.insertProducts = function (req, res) {
             var result = docs.map(function (a) {
               return a.idProduct;
             });
-            formattingResponse(res, 422, 'error', 'insertProducts', "Product(s) with idProduct " + result.join(', ') + " already exists.", req.query.retornoJson);
+            if (req.query.retornoJson === "true") {
+              res.status(422)
+              res.send({
+                message: "Product(s) with idProduct " + result.join(', ') + " already exists.",
+                retorno: false
+              })
+            } else {
+              formattingResponse(res, 422, 'error', 'insertProducts', "Product(s) with idProduct " + result.join(', ') + " already exists.");
+            }
           } else {
             collection.insert(listProducts, function (err, docs) {
               if (err) {
-                formattingResponse(res, 503, 'error', 'Insert', err, req.query.retornoJson);
+                if (req.query.retornoJson === "true") {
+                  res.status(503)
+                  res.send({
+                    message: err,
+                    retorno: false
+                  })
+                } else {
+                  formattingResponse(res, 503, 'error', 'Insert', err);
+                }
               } else {
-                formattingResponse(res, 200, 'success', 'Insert', "Successfully inserted the Product into database", req.query.retornoJson);
+                if (req.query.retornoJson === "true") {
+                  res.status(200)
+                  res.send({
+                    message: "Successfully inserted the Product into database",
+                    retorno: true
+                  })
+                } else {
+                  formattingResponse(res, 200, 'success', 'Insert', "Successfully inserted the Product into database");
+                }
               }
             });
           }
         }
       );
+      client.close();
     }
   });
 }
@@ -181,7 +241,15 @@ exports.updateProduct = function (req, res) {
 
   connection(req, res, function (err, client) {
     if (err) {
-      formattingResponse(res, 503, 'error', 'Connection', err, req.query.retornoJson);
+      if (req.query.retornoJson === "true") {
+        res.status(503)
+        res.send({
+          message: err,
+          retorno: false
+        })
+      } else {
+        formattingResponse(res, 503, 'error', 'Connection', err);
+      }
     } else {
       const db = client.db(dbName);
       // Get the documents collection
@@ -191,7 +259,15 @@ exports.updateProduct = function (req, res) {
       }, {}, {}).toArray(
         function (err, docs) {
           if (docs.length == 0) {
-            formattingResponse(res, 422, 'error', 'Update', "Product with idProduct " + idProduct + " not found", req.query.retornoJson);
+            if (req.query.retornoJson === "true") {
+              res.status(422)
+              res.send({
+                message: "Product with idProduct " + idProduct + " not found",
+                retorno: false
+              })
+            } else {
+              formattingResponse(res, 422, 'error', 'Update', "Product with idProduct " + idProduct + " not found");
+            }
           } else {
             // Get the documents collection
             collection.update({
@@ -206,15 +282,32 @@ exports.updateProduct = function (req, res) {
               'urlImage': urlImage
             }, function (err, docs) {
               if (err) {
-                formattingResponse(res, 503, 'error', 'Update', err, req.query.retornoJson);
+                if (req.query.retornoJson === "true") {
+                  res.status(503)
+                  res.send({
+                    message: err,
+                    retorno: false
+                  })
+                } else {
+                  formattingResponse(res, 503, 'error', 'Update', err);
+                }
               } else {
                 client.close();
-                formattingResponse(res, 200, 'success', 'Update', "Successfully update the Product into database", req.query.retornoJson);
+                if (req.query.retornoJson === "true") {
+                  res.status(200)
+                  res.send({
+                    message: "Successfully update the Product into database",
+                    retorno: true
+                  })
+                } else {
+                  formattingResponse(res, 200, 'success', 'Update', "Successfully update the Product into database");
+                }
               }
             });
           }
         }
       );
+      client.close();
     }
   });
 }
@@ -224,7 +317,15 @@ exports.deleteProduct = function (req, res) {
   var idProduct = req.params.idProduct;
   connection(req, res, function (err, client) {
     if (err) {
-      formattingResponse(res, 503, 'error', 'Connection', err);
+      if (req.query.retornoJson === "true") {
+        res.status(503)
+        res.send({
+          message: err,
+          retorno: false
+        })
+      } else {
+        formattingResponse(res, 503, 'error', 'Connection', err);
+      }
     } else {
       const db = client.db(dbName);
       // Get the documents collection
@@ -234,21 +335,46 @@ exports.deleteProduct = function (req, res) {
       }).toArray(
         function (err, docs) {
           if (docs.length === 0) {
-            formattingResponse(res, 422, 'error', 'Delete', "Product with idProduct " + idProduct + " not found", req.query.retornoJson);
+            if (req.query.retornoJson === "true") {
+              res.status(422)
+              res.send({
+                message: "Product with idProduct " + idProduct + " not found",
+                retorno: false
+              })
+            } else {
+              formattingResponse(res, 422, 'error', 'Delete', "Product with idProduct " + idProduct + " not found");
+            }
           } else {
             collection.deleteOne({
               idProduct: docs[0].idProduct
             }, function (err, docs) {
               if (err) {
-                formattingResponse(res, 503, 'error', 'Delete', err, req.query.retornoJson);
+                if (req.query.retornoJson === "true") {
+                  res.status(503)
+                  res.send({
+                    message: err,
+                    retorno: false
+                  })
+                } else {
+                  formattingResponse(res, 503, 'error', 'Delete', err);
+                }
               } else {
                 client.close();
-                formattingResponse(res, 200, 'success', 'Delete', "Successfully deleted the Product into database", req.query.retornoJson);
+                if (req.query.retornoJson === "true") {
+                  res.status(200)
+                  res.send({
+                    message: "Successfully deleted the Product into database",
+                    retorno: true
+                  })
+                } else {
+                  formattingResponse(res, 200, 'success', 'Delete', "Successfully deleted the Product into database");
+                }
               }
             });
           }
         }
       );
+      client.close();
     }
   });
 }

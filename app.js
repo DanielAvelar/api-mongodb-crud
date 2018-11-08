@@ -19,9 +19,11 @@ var login = require('./login');
 var logout = require('./logout');
 var index = require('./index');
 
-app.use(bodyParser.urlencoded({
+/*app.use(bodyParser.urlencoded({
   extended: false
-}));
+}));*/
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev')); // use morgan to log requests to the console
