@@ -10,7 +10,8 @@ exports.authenticate = function (req, res) {
       res.status(503)
       res.send({
         message: 'Unable to communicate with database',
-        retorno: false
+        session: '',
+        authentication: false
       })
     } else {
       formattingResponse(res, 503, 'errorLogin', 'Database', 'Unable to communicate with database');
@@ -25,7 +26,8 @@ exports.authenticate = function (req, res) {
           res.status(503)
           res.send({
             message: err,
-            retorno: false
+            session: '',
+            authentication: false
           })
         } else {
           formattingResponse(res, 503, 'errorLogin', 'Authenticate', err);
@@ -36,7 +38,8 @@ exports.authenticate = function (req, res) {
           res.status(401)
           res.send({
             message: 'Authentication failed. User not found.',
-            retorno: false
+            session: '',
+            authentication: false
           })
         } else {
           formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. User not found.');
@@ -48,7 +51,8 @@ exports.authenticate = function (req, res) {
             res.status(401)
             res.send({
               message: 'Authentication failed. Wrong password.',
-              retorno: false
+              session: '',
+              authentication: false
             })
           } else {
             formattingResponse(res, 401, 'errorLogin', 'Authenticate', 'Authentication failed. Wrong password.');
@@ -63,6 +67,8 @@ exports.authenticate = function (req, res) {
 
           if(req.query.retornoJson === "true"){
             res.send({
+              message: 'success',
+              session: token,
               authentication : true
             })
           }else{
