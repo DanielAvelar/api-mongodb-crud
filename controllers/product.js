@@ -38,7 +38,7 @@ exports.getProducts = function (req, res) {
               html: function () {
                 res.render('index', {
                   title: 'List of Products',
-                  "products": listProducts
+                  products: listProducts
                 });
               },
               //JSON response will show all Products in JSON format
@@ -200,6 +200,7 @@ exports.insertProducts = function (req, res) {
           } else {
             collection.insert(listProducts, function (err, docs) {
               if (err) {
+                client.close();
                 if (req.query.retornoJson === "true") {
                   res.status(503)
                   res.send({
@@ -210,6 +211,7 @@ exports.insertProducts = function (req, res) {
                   formattingResponse(res, 503, 'error', 'Insert', err);
                 }
               } else {
+                client.close();
                 if (req.query.retornoJson === "true") {
                   res.status(200)
                   res.send({
@@ -224,7 +226,6 @@ exports.insertProducts = function (req, res) {
           }
         }
       );
-      client.close();
     }
   });
 }
@@ -291,6 +292,7 @@ exports.updateProduct = function (req, res) {
                 } else {
                   formattingResponse(res, 503, 'error', 'Update', err);
                 }
+                client.close();
               } else {
                 client.close();
                 if (req.query.retornoJson === "true") {
@@ -307,7 +309,6 @@ exports.updateProduct = function (req, res) {
           }
         }
       );
-      client.close();
     }
   });
 }
@@ -358,6 +359,7 @@ exports.deleteProduct = function (req, res) {
                 } else {
                   formattingResponse(res, 503, 'error', 'Delete', err);
                 }
+                client.close();
               } else {
                 client.close();
                 if (req.query.retornoJson === "true") {
@@ -374,7 +376,6 @@ exports.deleteProduct = function (req, res) {
           }
         }
       );
-      client.close();
     }
   });
 }
