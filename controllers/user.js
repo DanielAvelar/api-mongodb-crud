@@ -41,6 +41,7 @@ exports.createUser = function (req, res) {
           var newUser = new User({
             name: req.body.name,
             password: req.body.password,
+            email: req.body.email,
             admin: req.body.admin.toString().toUpperCase() === 'ON' ? true : false
           });
           newUser.save(function (err) {

@@ -37,6 +37,11 @@ input[type=password] {
     border-radius: 4px;
 }
 
+input[type=email] {
+    border: 2px solid white;
+    border-radius: 4px;
+}
+
 button {
     background-color: #3d5476;
     border: 2px solid white;
