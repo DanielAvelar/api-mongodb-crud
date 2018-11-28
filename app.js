@@ -41,6 +41,8 @@ app.route('/').get(index.getIndex);
 app.route('/login').get(login.getLogin);
 // Select All Product for database.
 app.route('/getProductsNoAuth').get(noAuth.getProductsNoAuth);
+// Create New User for database.
+app.route('/createNewUser').post(noAuth.createNewUser);
 // Route logout user for system.
 app.route('/logout').get(logout.getLogout);
 

@@ -3,6 +3,8 @@ const myCollection = "products";
 // Database Name
 const dbName = 'data-api';
 
+var user = require('./controllers/user');
+
 // Select All Product for database.
 exports.getProductsNoAuth = function (req, res) {
   connection(req, res, function (err, client) {
@@ -28,3 +30,7 @@ exports.getProductsNoAuth = function (req, res) {
     client.close();
   });
 };
+
+exports.createNewUser = function(req, res){
+  user.createUser(req, res);
+}
