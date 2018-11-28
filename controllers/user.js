@@ -28,13 +28,13 @@ exports.createUser = function (req, res) {
       } else {
         if (user.length > 0) {
           if (req.query.retornoJson === "true") {
-            res.status(503)
+            res.status(200)
             res.send({
               message: 'User exists',
               retorno: false
             })
           } else {
-            formattingResponse(res, 503, 'error', 'Create user', 'User exists');
+            formattingResponse(res, 200, 'error', 'Create user', 'User exists');
           }
         } else {
           // create a sample user
