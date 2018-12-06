@@ -98,7 +98,16 @@ exports.checkAuthenticate = function (req, res, next) {
     // verifies secret and checks exp
     jwt.verify(token, config.secret, function (err, decoded) {
       if (err) {
-        formattingResponse(res, 403, 'errorLogin', 'Token Authenticate', 'Failed to authenticate token.');
+        if (req.query.retornoJson === "true") {
+          res.status(401)
+          res.send({
+            message: 'Failed to authenticate token.',
+            session: '',
+            authentication: false
+          })
+        } else {
+          formattingResponse(res, 403, 'errorLogin', 'Token Authenticate', 'Failed to authenticate token.');
+        }
       } else {
         // if everything is good, save to request for use in other routes
         req.decoded = decoded;
@@ -108,6 +117,15 @@ exports.checkAuthenticate = function (req, res, next) {
   } else {
     // if there is no token
     // return an error
-    formattingResponse(res, 401, 'errorLogin', 'Token Authenticate', 'No token provided.');
+    if (req.query.retornoJson === "true") {
+      res.status(401)
+      res.send({
+        message: 'No token provided.',
+        session: '',
+        authentication: false
+      })
+    } else {
+      formattingResponse(res, 401, 'errorLogin', 'Token Authenticate', 'No token provided.');
+    }
   }
 };
